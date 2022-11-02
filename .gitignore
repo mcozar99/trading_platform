@@ -3,3 +3,4 @@ venv
 __pycache__
 .ipynb_checkpoints
 sources.txt
+cloud_deployment/terraform.tf.py
