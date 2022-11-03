@@ -5,3 +5,7 @@ __pycache__
 sources.txt
 cloud_deployment/terraform.tf.py
 docker/Generic
+index.html
+data/test.csv
+data/test2.csv
+data/currecy_values.csv

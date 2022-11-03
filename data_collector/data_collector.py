@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append('.')
 sys.path.append('..')
 import pandas as pd
@@ -7,6 +8,7 @@ from utils import get_current_datetime, datetime_to_timestamp, add_minutes_to_da
 from database.influx import write_stream_data
 from datetime import datetime
 import pause
+
 
 class StreamCollector:
 
@@ -28,19 +30,27 @@ class StreamCollector:
         Scraps the url for getting the data
         :return: a raw response
         """
-        return pd.read_html(self.url)
+        try:
+            return pd.read_html(self.url)
+        except Exception as e:
+            print(e)
+            return None
 
     def format_data(self, df):
         """
         Parses the response to get the dataframe expected
         :return: a series with the formatted data
         """
-        df = df[1]
-        df.loc[len(df), :] = ['US Dollar', 1, 1]
-        df.rename(columns={'US Dollar': 'currency', '1.00 USD': 'value', 'inv. 1.00 USD': 'a'}, inplace=True)
-        df.drop('a', axis=1, inplace=True)
-        df.currency = df.currency.apply(lambda x: self.curr_dict[x])
-        return dict(zip(df.currency, df.value))
+        try:
+            df = df[1]
+            df.loc[len(df), :] = ['US Dollar', 1, 1]
+            df.rename(columns={'US Dollar': 'currency', '1.00 USD': 'value', 'inv. 1.00 USD': 'a'}, inplace=True)
+            df.drop('a', axis=1, inplace=True)
+            df.currency = df.currency.apply(lambda x: self.curr_dict[x])
+            return dict(zip(df.currency, df.value))
+        except Exception as e:
+            print(e)
+            return None
 
     def get_currency_values(self):
         """
@@ -65,8 +75,9 @@ class StreamCollector:
             # If we reached stop time then we save & stop the streaming
             if datetime_to_timestamp(stop_time) < datetime_to_timestamp(current_time):
                 # Not needed anymore
-                #df.to_csv('data/%s' % data_name, index=True)
+                # df.to_csv('data/%s' % data_name, index=True)
                 break
 
             # Sleep until a new update comes (we operate at half of each minute to let the page refresh)
-            pause.until(datetime.strptime(add_minutes_to_date(current_time, sweep_period), '%Y-%m-%d %H:%M').replace(second=30))
+            pause.until(
+                datetime.strptime(add_minutes_to_date(current_time, sweep_period), '%Y-%m-%d %H:%M').replace(second=30))
