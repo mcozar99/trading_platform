@@ -14,7 +14,7 @@ RUN pip3 install -r requirements.txt
 
 # Config.py
 RUN touch config.py
-RUN echo 'INFLUXDB_TOKEN = "JhYnxYHwXJwXcCbg2G5Raw8k4pS8aS_mnfOGbnMeeyOdA6sZNvqRqryHGNugXxCRgo3OwrWvPTiRnGMO0K50Qg"' >> config.py
+RUN echo INFLUXDB_TOKEN = \"JhYnxYHwXJwXcCbg2G5Raw8k4pS8aS_mnfOGbnMeeyOdA6sZNvqRqryHGNugXxCRgo3OwrWvPTiRnGMO0K50Qg\" >> config.py
 
 # Runs the stream gatherer in a container and feeds InfluxDB
 RUN chmod 777 main.py
