@@ -2,3 +2,4 @@ pandas
 pause
 lxml
 influxdb
+influxdb_client
