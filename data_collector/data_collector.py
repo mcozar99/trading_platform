@@ -1,6 +1,10 @@
+import sys
+sys.path.append('.')
+sys.path.append('..')
 import pandas as pd
 import json
 from utils import get_current_datetime, datetime_to_timestamp, add_minutes_to_date
+from database.influx import write_stream_data
 from datetime import datetime
 import pause
 
@@ -36,7 +40,7 @@ class StreamCollector:
         df.rename(columns={'US Dollar': 'currency', '1.00 USD': 'value', 'inv. 1.00 USD': 'a'}, inplace=True)
         df.drop('a', axis=1, inplace=True)
         df.currency = df.currency.apply(lambda x: self.curr_dict[x])
-        return pd.DataFrame(dict(zip(df.currency, df.value)), index=[0])
+        return dict(zip(df.currency, df.value))
 
     def get_currency_values(self):
         """
@@ -45,30 +49,23 @@ class StreamCollector:
         """
         return self.format_data(self.scrap())
 
-    def streaming(self, sweep_period=5, iterations_to_save=5, data_name='currecy_values.csv',
-                  stop_time='2100-12-31 12:00'):
+    def streaming(self, sweep_period=5, stop_time='2100-12-31 12:00'):
         """
         Gathers streaming data from the url provided
         :param sweep_period: time in minutes for scrapping from 1 minute to x
-        :param iterations_to_save: number of iterations to save the data -> from 1 to x
-        :param data_name: filename to save data
         :param stop_time: date to stop in format 'yyyy-mm-dd hh:mm'
         """
-        # dataframe with index = datetime and columns currencies
-        df = pd.DataFrame(columns=self.currencies)
+
         while True:
-            # Add current forex values to the dataframe
+            # Add current forex values to InfluxDB
             row = self.get_currency_values()
             current_time = get_current_datetime()
-            df.loc[current_time, :] = row.iloc[0]
-
-            # Periodic saving
-            if len(df) % iterations_to_save == 0:
-                df.to_csv('data/%s' % data_name, index=True)
+            write_stream_data(row)
 
             # If we reached stop time then we save & stop the streaming
             if datetime_to_timestamp(stop_time) < datetime_to_timestamp(current_time):
-                df.to_csv('data/%s' % data_name, index=True)
+                # Not needed anymore
+                #df.to_csv('data/%s' % data_name, index=True)
                 break
 
             # Sleep until a new update comes (we operate at half of each minute to let the page refresh)
