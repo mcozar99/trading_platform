@@ -26,20 +26,3 @@ def write_stream_data(row):
     }
 
     write_api.write(bucket=bucket, org="mcozartramblin@hawk.iit.edu", record=data)
-
-
-'''
-def simple_query():
-    query_api = client.query_api()
-
-    query = """from(bucket: "currencies")
-     |> range(start: -10m)
-     |> filter(fn: (r) => r._measurement == "measurement1")"""
-    tables = query_api.query(query, org="mcozartramblin@hawk.iit.edu")
-
-    for table in tables:
-      for record in table.records:
-        print(record)
-
-simple_query()
-'''

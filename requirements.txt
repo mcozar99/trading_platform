@@ -3,3 +3,5 @@ pause
 lxml
 influxdb
 influxdb_client
+flask
+plotly
