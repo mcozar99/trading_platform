@@ -8,5 +8,5 @@ cd visualization
 # Docker Image Built
 sudo chmod 777 /var/run/docker.sock
 docker build -t visualization .
-docker run -t -i -p 5000:5000 visualization
+docker run -t -i -p 8080:8080 visualization
 

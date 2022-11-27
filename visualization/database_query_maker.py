@@ -1,13 +1,18 @@
 import sys
-import influxdb_client, os, time
-from influxdb_client import InfluxDBClient, Point, WritePrecision
-from influxdb_client.client.write_api import SYNCHRONOUS
-from config import INFLUXDB_TOKEN
-import pandas as pd
-from datetime import datetime
 
 sys.path.append('.')
 sys.path.append('..')
+import influxdb_client, os, time
+from influxdb_client import InfluxDBClient, Point, WritePrecision
+from influxdb_client.client.write_api import SYNCHRONOUS
+from influxdb_client.client.warnings import MissingPivotFunction
+from config import INFLUXDB_TOKEN
+import pandas as pd
+import json
+import warnings
+
+# Warning clean
+warnings.simplefilter("ignore", MissingPivotFunction)
 
 
 class QueryMaker:
@@ -21,7 +26,10 @@ class QueryMaker:
         self.url = "https://us-east-1-1.aws.cloud2.influxdata.com"
         self.client = influxdb_client.InfluxDBClient(url=self.url, token=INFLUXDB_TOKEN, org=self.org)
         self.bucket = "currencies"
-
+        with open('../data/currency_dictionary.json', 'r') as f:
+            data = json.load(f)
+            self.currency_names = list(data.keys())
+            self.currency_symbols = list(data.values())
 
     def currency_simple_query(self, currencies, start, stop):
         """
@@ -38,18 +46,47 @@ class QueryMaker:
         if len(currencies) == 0:
             return None
         elif len(currencies) == 1:
-            filter = 'r["_field"] == "%s"' % currencies[0]
+            fields = 'r["_field"] == "%s"' % currencies[0]
         else:
-            filter = 'r["_field"] == "%s"' % currencies[0]
+            fields = 'r["_field"] == "%s"' % currencies[0]
             for item in currencies[1:]:
-                filter += ' or r["_field"] == "%s"' % item
+                fields += ' or r["_field"] == "%s"' % item
 
         query = """from(bucket: "currencies")
         |> range(start: %s, stop: %s)
         |> filter(fn: (r) => %s) |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")""" % (
-            start, stop, filter)
+            start, stop, fields)
         try:
             return self.client.query_api().query_data_frame(query, org=self.org)
         except Exception as e:
             print(e)
             return None
+
+    def get_latest_values(self, currencies):
+        """Gets a table with the latest values of a given list if currencies"""
+        # Parse Currency List
+        if len(currencies) == 0:
+            return None
+        elif len(currencies) == 1:
+            fields = 'r["_field"] == "%s"' % currencies[0]
+        else:
+            fields = 'r["_field"] == "%s"' % currencies[0]
+            for item in currencies[1:]:
+                fields += ' or r["_field"] == "%s"' % item
+
+        query = """from(bucket: "currencies")
+          |> range(start: -2m)
+          |> filter(fn: (r) => %s)
+          |> last()
+          |> yield(name: "last")
+        """ % fields
+
+        try:
+            df = self.client.query_api().query_data_frame(query, org=self.org)
+        except Exception as e:
+            print(e)
+            return None
+        out = pd.DataFrame({'time': df._time, 'Currency Symbol': df._field})
+        out['Currency Name'] = df._field.apply(lambda x: self.currency_names[self.currency_symbols.index(x)])
+        out['value'] = df._value
+        return out
