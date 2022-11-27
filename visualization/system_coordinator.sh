@@ -1,16 +1,12 @@
-### Define all the commands to configure our EC2 instance and put it to work
-sudo yum update -y
-sudo amazon-linux-extras install docker
-sudo service docker start
-sudo systemctl enable docker
-sudo usermod -a -G docker ec2-user
-sudo yum install git
+# All the commands for the set up are installed in
+# Visualization implementation
+mkdir visualization
+mv trading_platform/docker/Visualizer visualization
+mv visualization/Visualizer visualization/Dockerfile
+cd visualization
 
-# Repo downloading
-git clone https://github.com/mcozar99/trading_platform
+# Docker Image Built
+sudo chmod 777 /var/run/docker.sock
+docker build -t visualization .
+docker run -t -i -p 5000:5000 visualization
 
-# Stream collector implementation
-mkdir streamcollector
-mv trading_platform/docker/DataGatherer streamcollector
-mv streamcollector/DataGatherer streamcollector/Dockerfile
-cd streamcollector

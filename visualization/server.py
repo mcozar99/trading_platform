@@ -56,5 +56,4 @@ def stream():
             time.sleep(1)
     return app.response_class(stream_with_context(generate()))
 
-if __name__ == "__main__":
-    app.run(host="127.0.0.1", port="5000")
+
