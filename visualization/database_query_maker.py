@@ -89,6 +89,6 @@ class QueryMaker:
             print(e)
             return None
         out = pd.DataFrame({'time': df._time, 'Currency Symbol': df._field})
-        out['Currency Name'] = df._field.apply(lambda x: self.currency_names[self.currency_symbols.index(x)])
+        out['Currency Name'] = df._field.apply(lambda x: list(self.currency_names.keys()) [list(self.currency_names.values()).index(x)])
         out['value'] = df._value
         return out
