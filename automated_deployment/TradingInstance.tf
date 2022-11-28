@@ -102,6 +102,8 @@ resource "aws_security_group_rule" "trading_instance4" {
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
 }
+
+
 ## AWS EC2
 resource "aws_instance" "trading_instance" {
   # Disk image id
@@ -123,6 +125,20 @@ resource "aws_instance" "trading_instance" {
        Name = "Trading Platform"
     }
 
+  provisioner "file" {
+    source="config.env"
+    destination = "/home/ec2-user/config.env"
+    # Connection to be used by provisioner to perform remote executions
+    connection {
+        # Use public DNS of the instance to connect to it.
+        host          = "${aws_instance.trading_instance.public_dns}"
+        type          = "ssh"
+        user          = "ec2-user"
+        private_key   = "${file("emr-key-pair.pem")}"
+        timeout       = "1m"
+        agent         = false
+    }
+  }
 
   provisioner "remote-exec" {
         inline = [
@@ -138,16 +154,13 @@ resource "aws_instance" "trading_instance" {
             "sudo yum install -y git",
 
             # Install docker compose
+
             "sudo curl -L \"https://github.com/docker/compose/releases/download/v2.12.2/docker-compose-$(uname -s)-$(uname -m)\"  -o /usr/local/bin/docker-compose",
             "sudo mv /usr/local/bin/docker-compose /usr/bin/docker-compose",
             "sudo chmod +x /usr/bin/docker-compose",
 
             # Repo cloning
             "git clone https://github.com/mcozar99/trading_platform",
-
-            # We give permissions to the docker coordinators
-            "chmod 777 trading_platform/data_collector/system_coordinator.sh",
-            "chmod 777 trading_platform/visualization/system_coordinator.sh",
 
             # Build images
             "sudo chmod 777 /var/run/docker.sock",
@@ -181,5 +194,4 @@ resource "aws_instance" "trading_instance" {
         }
     }
 }
-
 

@@ -25,10 +25,13 @@ class QueryMaker:
         self.url = "https://us-east-1-1.aws.cloud2.influxdata.com"
         self.client = influxdb_client.InfluxDBClient(url=self.url, token=INFLUXDB_TOKEN, org=self.org)
         self.bucket = "currencies"
-        with open('../data/currency_dictionary.json', 'r') as f:
-            data = json.load(f)
-            self.currency_names = list(data.keys())
-            self.currency_symbols = list(data.values())
+        self.currency_symbols = ['ARS', 'AUD', 'BHD', 'BWP', 'BRL', 'BND', 'BGN', 'CAD', 'CLP', 'CNY', 'COP', 'HRK', 'CZK',
+                           'DKK', 'EUR', 'HKD', 'HUF', 'ISK', 'INR', 'IDR', 'IRR', 'ILS', 'JPY', 'KZT', 'KRW', 'KWD',
+                           'LYD', 'MYR', 'MUR', 'MXN', 'NPR', 'NZD', 'NOK', 'OMR', 'PKR', 'PHP', 'PLN', 'QAR', 'RON',
+                           'RUB', 'SAR', 'SGD', 'ZAR', 'LKR', 'SEK', 'CHF', 'TWD', 'THB', 'TTD', 'TRY', 'AED', 'GBP',
+                           'VEF', 'USD']
+        with open('data/currency_dictionary.json', 'r') as f:
+            self.currency_names = json.load(f)
 
     def currency_simple_query(self, currencies, start, stop):
         """

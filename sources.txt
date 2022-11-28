@@ -1,0 +1,26 @@
+EU USD 2005-2020
+https://www.kaggle.com/datasets/imetomi/eur-usd-forex-pair-historical-data-2002-2019?select=eurusd_minute.csv
+
+All currencies data for every year in tables -> easily scrappeable
+https://www.imf.org/external/np/fin/data/param_rms_mth.aspx
+
+Getting started with terraform
+Requisites: jq
+https://thomgreene.com/post/2020/2020-06-15-terraform-getting-started-windows/#:~:text=If%20Windows%20returns%20%27terraform%27%20is,and%20deploy%20a%20test%20environment.
+https://www.youtube.com/watch?v=l5k1ai_GBDE&ab_channel=TechWorldwithNana
+
+
+Create an instance with Terraform
+https://www.youtube.com/watch?v=-18iQ7vUmHU&ab_channel=CloudQuickLabs
+https://github.com/RekhuGopal/gitreusableflows
+https://medium.com/@hmalgewatta/setting-up-an-aws-ec2-instance-with-ssh-access-using-terraform-c336c812322f
+Execute commands with terraform
+https://stackoverflow.com/questions/63978548/how-to-run-scritps-after-create-ec2-using-terraform-during-apply
+
+Launch a flask server
+https://flask.palletsprojects.com/en/1.1.x/quickstart/
+Hacerlo dentro de un contenedor docker
+https://blog.logrocket.com/build-deploy-flask-app-using-docker/
+
+Docker compose tutorial
+https://www.baeldung.com/ops/docker-compose
