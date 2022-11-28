@@ -1,0 +1,12 @@
+version: "3.7"
+services:
+  stream:
+    build: streamcollector/Dockerfile
+    image: stream
+    ports:
+       - 80:80
+  visualization:
+    build: visualization/Dockerfile
+    image: visualization
+    ports:
+       - 8080:8080
