@@ -1,12 +1,10 @@
 import sys
-
 sys.path.append('.')
 sys.path.append('..')
 import influxdb_client, os, time
 from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
 from influxdb_client.client.warnings import MissingPivotFunction
-from config import INFLUXDB_TOKEN
 import pandas as pd
 import json
 import warnings
@@ -14,6 +12,7 @@ import warnings
 # Warning clean
 warnings.simplefilter("ignore", MissingPivotFunction)
 
+INFLUXDB_TOKEN = os.environ['INFLUXDB_TOKEN']
 
 class QueryMaker:
 

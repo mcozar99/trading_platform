@@ -3,10 +3,12 @@ services:
   stream:
     build: streamcollector/Dockerfile
     image: stream
+    env_file: config.env
     ports:
        - 80:80
   visualization:
     build: visualization/Dockerfile
     image: visualization
+    env_file: config.env
     ports:
        - 8080:8080

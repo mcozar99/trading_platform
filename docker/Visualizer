@@ -13,8 +13,6 @@ WORKDIR trading_platform
 RUN pip3 install -r requirements.txt
 
 # Config.py
-RUN touch config.py
-RUN echo INFLUXDB_TOKEN = \"JhYnxYHwXJwXcCbg2G5Raw8k4pS8aS_mnfOGbnMeeyOdA6sZNvqRqryHGNugXxCRgo3OwrWvPTiRnGMO0K50Qg==\" >> config.py
 WORKDIR visualization
 
 # Set up all the environment variables required for flask apps
