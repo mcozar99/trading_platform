@@ -30,7 +30,7 @@ class QueryMaker:
                            'LYD', 'MYR', 'MUR', 'MXN', 'NPR', 'NZD', 'NOK', 'OMR', 'PKR', 'PHP', 'PLN', 'QAR', 'RON',
                            'RUB', 'SAR', 'SGD', 'ZAR', 'LKR', 'SEK', 'CHF', 'TWD', 'THB', 'TTD', 'TRY', 'AED', 'GBP',
                            'VEF', 'USD']
-        with open('data/currency_dictionary.json', 'r') as f:
+        with open('../data/currency_dictionary.json', 'r') as f:
             self.currency_names = json.load(f)
 
     def currency_simple_query(self, currencies, start, stop):
